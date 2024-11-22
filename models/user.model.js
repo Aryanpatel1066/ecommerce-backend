@@ -33,4 +33,5 @@ const userSchema = new mongoose.Schema({
     enum:["CUSTOMER","ADMIN"]
  }
 },{timestamps:true,versionKey:false})
+//now create user name collection
 module.exports = mongoose.model("User",userSchema);
