@@ -7,6 +7,7 @@ const server_config = require('./configs/server.config');
 const db_config = require('./configs/db.config');
 const user_modal = require('./models/user.model');
 
+app.use(express.json())
 /**
  * Connect to MongoDB
  */
@@ -48,7 +49,8 @@ async function init() {
         console.error("Error during admin initialization:", err);
     }
 }
-
+// call the route to the server and pass to app object
+require("./routes/auth.routes")(app)
 /**
  * Start the server
  */
