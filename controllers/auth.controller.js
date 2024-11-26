@@ -1,5 +1,6 @@
  /**
  * I need to write the controller / logic to register a user
+ * controller can manage both the client request and response by server help of req,res object
  */
 const bcrypt = require("bcryptjs")
 const user_model = require("../models/user.model")
@@ -26,6 +27,7 @@ const user_model = require("../models/user.model")
         /**
          * Return this user
          */
+    //3. Return the response back to the user
 
         const res_obj = {
             name : user_created.name,
@@ -44,7 +46,6 @@ const user_model = require("../models/user.model")
         })
     }
 
-    //3. Return the response back to the user
 
 }
 

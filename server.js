@@ -6,7 +6,7 @@ const app = express();
 const server_config = require('./configs/server.config');
 const db_config = require('./configs/db.config');
 const user_modal = require('./models/user.model');
-
+//convert json into javascript object
 app.use(express.json())
 /**
  * Connect to MongoDB
