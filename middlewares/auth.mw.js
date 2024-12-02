@@ -1,4 +1,5 @@
 // check the request body proper or not
+const { response } = require("express")
 const user_model = require("../models/user.model")
 const verifySignupBody=async(req,res,next)=>{
     try{
@@ -36,6 +37,20 @@ const verifySignupBody=async(req,res,next)=>{
         })
     }
 }
+
+const verifySignInBody = async(req,res,next)=>{
+  if(!req.body.userId){
+    return res.status(400).send({
+      message:"userId is not provided"
+    })
+  }
+  else if(!req.body.password){
+    return res.status(400).send({
+      message:"password is not provided"
+    })
+  }
+}
 module.exports = {
-    verifySignupBody : verifySignupBody
+    verifySignupBody : verifySignupBody,
+    verifySignInBody : verifySignInBody
 }
