@@ -1,56 +1,69 @@
-// check the request body proper or not
-const { response } = require("express")
-const user_model = require("../models/user.model")
-const verifySignupBody=async(req,res,next)=>{
-    try{
-      //chceck for name
-      if(!req.body.name){
-        return res.status(400).send({
-            message:"faild name was not provided"
-        })
-      }
-      //check for email
-      if(!req.body.email){
-        return res.status(400).send({
-            message:"faild email was not provided"
-        })
-      }
-      //check for the userid
-      if(!req.body.userId){
-        return res.status(400).send({
-            message:"faild userId was not provided"
-        })
-      }
-      //check if the user with the same userId is alredy present 
-      const user = await user_model.findOne({userId:req.body.userId}) 
-      if(user){
-        return res.status(400).send({
-            message:"failed user with same userid is allredy present"
-        })
-      }
-      next()
-    }
-    catch(err){
-        console.log("error while validatin",err)
-        res.status(500).send({
-            massage:"error wile vali dating body"
-        })
-    }
-}
+const jwt = require("jsonwebtoken");
+const auth_config = require("../configs/auth.config");
+const user_model = require("../models/user.model");
 
-const verifySignInBody = async(req,res,next)=>{
-  if(!req.body.userId){
-    return res.status(400).send({
-      message:"userId is not provided"
-    })
+const verifySignupBody = async (req, res, next) => {
+  try {
+    if (!req.body.name) {
+      return res.status(400).send({ message: "Failed: Name was not provided" });
+    }
+    if (!req.body.email) {
+      return res.status(400).send({ message: "Failed: Email was not provided" });
+    }
+    if (!req.body.userId) {
+      return res.status(400).send({ message: "Failed: UserId was not provided" });
+    }
+    const user = await user_model.findOne({ userId: req.body.userId });
+    if (user) {
+      return res.status(400).send({ message: "Failed: User with same userId already exists" });
+    }
+    next();
+  } catch (err) {
+    console.error("Error while validating body:", err.message || err);
+    return res.status(500).send({ message: "Error while validating body" });
   }
-  else if(!req.body.password){
-    return res.status(400).send({
-      message:"password is not provided"
+};
+
+const verifySignInBody = async (req, res, next) => {
+  if (!req.body.userId) {
+    return res.status(400).send({ message: "userId is not provided" });
+  } else if (!req.body.password) {
+    return res.status(400).send({ message: "password is not provided" });
+  }
+  next();
+};
+
+const verifyToken = async (req, res, next) => {
+  const token = req.headers['authorization'] || req.headers['access-token'];
+  if (!token) {
+    return res.status(403).send({ message: "No token found. Unauthorized" });
+  }
+  jwt.verify(token, auth_config.secrete, async (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: "Unauthorized" });
+    }
+    const user = await user_model.findOne({ userId: decoded.id });
+    if (!user) {
+      return res.status(400).send({ message: "Unauthorized. Token does not match any user" });
+    }
+    req.user = user; // Attach user for downstream usage
+    next();
+  });
+};
+const isAdmin = (req,res,next)=>{
+  const user = req.user
+  if(user && user.userType == "ADMIN"){
+    next()
+  }
+  else{
+    return res.status(403).send({
+      message:"only admin access this end point"
     })
   }
 }
 module.exports = {
-    verifySignupBody : verifySignupBody,
-    verifySignInBody : verifySignInBody
-}
+  verifySignupBody,
+  verifySignInBody,
+  verifyToken,
+  isAdmin
+};
