@@ -5,5 +5,8 @@
 const category_controller = require("../controllers/category.controller")
 const auth_mw = require("../middlewares/auth.mw")
 module.exports=(app)=>{
-    app.post("/ecomm/api/v1/categories",[auth_mw.verifyToken,auth_mw.isAdmin],category_controller.createNewCategory)
+    //api for creating the categories
+    app.post("/ecomm/api/v1/categories",[auth_mw.verifyToken,auth_mw.isAdmin],category_controller.createNewCategory);
+   //api for showing all the categories
+   app.get("/ecomm/api/v1/categories",category_controller.showAllCategory)
 }
