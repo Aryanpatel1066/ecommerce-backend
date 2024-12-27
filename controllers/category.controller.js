@@ -1,4 +1,5 @@
  const category_model = require("../models/category.model")
+ const mongoose = require('mongoose')
 /*
 controller for creating the category post call
 POST  localhost:8080/ecomm/api/v1/category
@@ -45,5 +46,37 @@ exports.showAllCategory=async(req,res)=>{
       success:false,
       message:"error not showing all category"
     })
+  }
+}
+
+exports.deleteCategory = async(req,res)=>{
+  try{
+  //step1: pass the id specific category in route to delete now fetch it
+  const {id} = req.params;
+   // Step 2: Validate the ID format
+   if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send({
+      message: "Invalid ID format",
+    });
+  }
+  //step2: now delete it
+  const deledCategory = await category_model.findByIdAndDelete(id);
+  console.log(id)
+  //step3: if not found id then or if found 
+  if(!deledCategory){
+    return res.status(404).send({
+      message:"oops! category not found"
+    })
+  } 
+  //successfully deleted category
+  return res.status(200).send({
+    message:"successfully deleted the category..."
+  })
+  }
+  catch(err){
+   console.log(err);
+  return res.status(500).send({
+    message:"some thing wrong can't delete the category"
+   })
   }
 }

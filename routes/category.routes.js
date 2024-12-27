@@ -7,6 +7,11 @@ const auth_mw = require("../middlewares/auth.mw")
 module.exports=(app)=>{
     //api for creating the categories
     app.post("/ecomm/api/v1/categories",[auth_mw.verifyToken,auth_mw.isAdmin],category_controller.createNewCategory);
+
    //api for showing all the categories
-   app.get("/ecomm/api/v1/categories",category_controller.showAllCategory)
+   app.get("/ecomm/api/v1/categories",category_controller.showAllCategory);
+
+   //api for deleted categories
+   app.delete("/ecomm/api/v1/categories/:id",[auth_mw.verifyToken,auth_mw.isAdmin],category_controller.deleteCategory)
+
 }
