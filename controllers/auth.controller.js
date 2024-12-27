@@ -68,7 +68,7 @@ if(!isPasswordValid){
     })
 }
     //using jwt create access token time to leave expire in time //wht dato for like user id,secrete code// time like 2 miniute 120 second
-    const token = jwt.sign({id:user.userId},authConfig.secrete,{expiresIn:120})
+    const token = jwt.sign({id:user.userId},authConfig.secrete,{expiresIn:220})
     res.status(200).send({
         name:user.name,
         userId:user.userId,
