@@ -80,3 +80,31 @@ exports.deleteCategory = async(req,res)=>{
    })
   }
 }
+
+//for the upadate the category
+exports.updateCategory = async (req,res)=>{
+  try{
+    //step1:read the id for url
+    const {id} = req.params;
+    const {name,description}=req.body;
+
+    //step2: update the category 
+    const category =await category_model.findByIdAndUpdate(id,{name,description},{new:true});
+   
+  if(!category){
+    return res.status(402).send({
+      message:"sorry cant update the category"
+    })
+  }
+     return res.status(200).send({
+      message:`successfully updated the category `,
+     updateCategory:category
+    })
+  
+  }
+  catch(err){
+    return res.status(400).send({
+      message:"the error happen while update the category"
+    })
+  }
+}
