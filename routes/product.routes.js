@@ -11,4 +11,8 @@ app.get("/ecomm/api/v1/product",product_controller.showingAllProducts)
 //api for search the product
 
 app.get("/ecomm/api/v1/product/search",product_controller.searchProductByName)
+
+//api for the update the product by admin
+
+app.put("/ecomm/api/v1/product/:id",[auth_mw.verifyToken,auth_mw.isAdmin,product_mw.verifyProductBody],product_controller.updatedProduct)
 }

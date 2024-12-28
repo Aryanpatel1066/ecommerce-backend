@@ -69,3 +69,31 @@ exports.searchProductByName = async (req,res)=>{
         })
     }
 }
+
+//controller for the update the product details
+
+exports.updatedProduct = async (req,res)=>{
+    try{
+        //step1: fetch the id form url and second thing is read the body details
+     const {id} = req.params;
+     const {name,price,details,description,category}=req.body;
+
+     //step2: update the product in db
+     const updated_product = await product_model.findByIdAndUpdate(id,{name,price,description,category},{new:true});
+
+     if(!updated_product){
+        return res.status(504).send({
+            message:"some thing happened can't update the category"
+        })
+     }
+     res.status(200).send({
+        message:"successfully updated the product...",
+        product :updated_product
+     })
+    }
+    catch(err){
+        return res.status(500).send({
+            message:"error happened while update the product"
+        })
+    }
+}
