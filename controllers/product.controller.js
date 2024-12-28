@@ -97,3 +97,30 @@ exports.updatedProduct = async (req,res)=>{
         })
     }
 }
+
+//controller for the delet the product
+
+exports.deletedProduct = async (req,res)=>{
+    try{
+//step1: read the id from url
+const {id}=req.params;
+
+//step2:delete the product and update the db
+
+const deleted_product = await product_model.findByIdAndDelete(id)
+//step3: if delte the product then success or err
+if(!deleted_product){
+    return res.status(404).send({
+        message:"this product does not exist"
+    })
+}
+return res.status(200).send({
+    message:"successfully deleted product"
+})
+    }
+    catch(err){
+       return res.status(502).send({
+        message:"error happende while the delete product"
+       })
+    }
+}

@@ -15,4 +15,8 @@ app.get("/ecomm/api/v1/product/search",product_controller.searchProductByName)
 //api for the update the product by admin
 
 app.put("/ecomm/api/v1/product/:id",[auth_mw.verifyToken,auth_mw.isAdmin,product_mw.verifyProductBody],product_controller.updatedProduct)
+
+//api for the deleting the product by admin
+
+app.delete("/ecomm/api/v1/product/:id",[auth_mw.verifyToken,auth_mw.isAdmin],product_controller.deletedProduct)
 }
