@@ -1,75 +1,98 @@
-const cart_model = require("../models/cart.model");
-const user_model = require("../models/user.model");
+const Cart = require("../models/cart.model");
 
 exports.createCart = async (req, res) => {
     try {
-        // Step 1: Check if the user ID is provided or not
+        // Assuming userId is available in the authenticated user's token or middleware
         const userId = req.user.id;
+
         if (!userId) {
-            return res.status(502).send({
-                message: "Please provide the userId"
+            return res.status(400).send({
+                message: "User ID is required",
             });
         }
 
-        // Step 2: Check if a cart already exists for the user
-        const existingCart = await cart_model.findOne({ userId: userId });
+        // Check if a cart already exists for the user
+        const existingCart = await Cart.findOne({ userId });
 
         if (existingCart) {
             return res.status(400).send({
-                message: "User already has a cart"
+                message: "User already has a cart",
             });
         }
 
-        // Step 3: If no cart exists, create a new one
-        const newCart = await cart_model.create({ userId: userId });
+        // Create a new cart with the userId
+        const newCart = await Cart.create({ userId });
 
         res.status(201).send({
-            message: "Successfully created the cart",
-            cart: newCart
+            message: "Cart created successfully",
+            cart: newCart,
         });
     } catch (err) {
         console.error(err);
-        return res.status(504).send({
-            message: "Error while creating the cart"
+        res.status(500).send({
+            message: "Error while creating the cart",
         });
     }
 };
 
-exports.AddCartData = async (req,res)=>{
-    try{
-      //step1: pass the cart id in url and readit
-      const {id:cartId} = req.params;
-      //step2: pass the product array  in req body
-      const {products} = req.body;
+exports.AddCartData = async (req, res) => {
+    try {
+        const { id: cartId } = req.params; // Extract cart ID from URL
+        const { products } = req.body; // Extract products array from request body
 
-      if(!cartId){
-        return res.status(504).send({
-            message:"cart id require in url"
-        })
-      }
-      // Step 3: Find the cart by ID
-      const cart = await cart_model.findById(cartId);
+        if (!cartId) {
+            return res.status(400).send({
+                message: "Cart ID is required in the URL",
+            });
+        }
 
-      if (!cart) {
-          return res.status(404).send({
-              message: "Cart not found",
-          });
-      }
-       // Step 4: Add new products to the existing array
-       cart.products = [...cart.products, ...products];
+        if (!products || !Array.isArray(products)) {
+            return res.status(400).send({
+                message: "Products must be an array in the request body",
+            });
+        }
 
-        // Step 6: Save the updated cart
+        // Find the cart by ID
+        const cart = await Cart.findById(cartId);
+
+        if (!cart) {
+            return res.status(404).send({
+                message: "Cart not found",
+            });
+        }
+
+        // Validate and normalize products
+        const newProducts = products.map((product) => {
+            if (!product.name || !product.price || !product.quantity) {
+                throw new Error(
+                    "Each product must include 'name', 'price', and 'quantity'"
+                );
+            }
+            return {
+                ...product,
+                totalPrice: product.price * product.quantity,
+            };
+        });
+
+        // Add new products to the existing array
+        cart.products = [...cart.products, ...newProducts];
+
+        // Update the cart's total cost
+        cart.totalCost = cart.products.reduce(
+            (total, product) => total + product.totalPrice,
+            0
+        );
+
+        // Save the updated cart
         const updatedCart = await cart.save();
 
-        // Step 7: Send success response
         res.status(200).send({
             message: "Cart updated successfully",
             cart: updatedCart,
         });
+    } catch (err) {
+        res.status(500).send({
+            message: err.message || "Failed to update the cart",
+        });
     }
-    catch(err){
-        return res.status(404).send({
-            message:"This cart does not update"
-        })
-    }
-}
+};
