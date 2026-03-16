@@ -1,4 +1,4 @@
 //SERVER CONFIGURATIONS     
 module.exports={
-    PORT:8080
+    PORT:process.env.PORT || 8080
 }

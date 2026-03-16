@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  backend:
+    build: .
+    container_name: ecommerce-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7
+    container_name: ecommerce-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-data:/data/db 
+
+volumes:
+  mongo-data: 
+  # volume name
+
+#  volumes:  name volume
+#     - mongo-data:/data/db  # ← REMOVE THIS
+
+  # volumes: bind volme
+  #   - ./mongo-data:/data/db  # 👈 ./mongo-data on your Mac!

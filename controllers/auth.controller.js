@@ -38,7 +38,7 @@ const authConfig = require("../configs/auth.config");
             email : user_created.email,
             userType : user_created.userType,
             createdAt : user_created.createdAt,
-            updatedAt : user_created.updateAt
+            updatedAt : user_created.updatedAt
         }
         res.status(201).send(res_obj)
 

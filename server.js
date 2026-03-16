@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+require('dotenv').config()
 const app = express();
 const server_config = require('./configs/server.config');
 const db_config = require('./configs/db.config');
@@ -49,6 +50,13 @@ async function init() {
         console.error("Error during admin initialization:", err);
     }
 }
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "🚀 Ecommerce Backend is running",
+    timestamp: new Date().toISOString()
+  });
+});
 // call the route to the server and pass to app object
 require("./routes/auth.routes")(app)
 require("./routes/category.routes")(app)

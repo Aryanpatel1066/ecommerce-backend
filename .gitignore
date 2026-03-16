@@ -1,0 +1,20 @@
+# Ignore node_modules (Dependencies)
+node_modules/
+
+# Ignore environment variables (Sensitive Data)
+.env
+
+# Ignore log files
+logs/
+*.log
+
+# Ignore database dumps
+dump.rdb
+*.sqlite
+
+# Ignore OS-specific & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+
+mongo-data/

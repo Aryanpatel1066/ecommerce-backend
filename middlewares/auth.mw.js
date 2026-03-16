@@ -23,6 +23,10 @@ const verifySignupBody = async(req,res,next)=>{
             message:"userId was not provided in request body"
         })
       }
+      if (!req.body.password) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
       //check if same userId
       const user = await user_model.findOne({userId:req.body.userId});
       if(user){
